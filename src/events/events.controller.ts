@@ -4,10 +4,13 @@ import {
   Delete,
   Get,
   HttpCode,
-  Param, ParseIntPipe,
+  Param,
+  ParseIntPipe,
   Patch,
-  Post, ValidationPipe,
+  Logger,
+  Post, ValidationPipe, NotFoundException,
 } from '@nestjs/common';
+
 import { CreateEventDto } from './create-event.dto';
 import { UpdateEventDto } from './update-event.dto';
 import { Event } from './event.entity';
@@ -22,7 +25,9 @@ export class EventsController {
   private repository: any;
   private when: any;
   private order: number;
+  private EventsContoller: any;
 
+  private readonly Logger = new(this.EventsContoller.name);
 
   constructor(
     @InjectRepository(Event)
@@ -31,13 +36,20 @@ export class EventsController {
 
   @Get()
   async findAll() {
-    return await this.repository.find();
+    this.Logger.log('Hit the findAll route');
+    const events = await this.repository.find();
+    this.Logger.debug(`Found ${events.length} event`)
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id) {
-    console.log(typeof id)
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    // console.log(typeof id)
     return await this.repository.findOne(id);
+
+    if(!event) {
+      throw new NotFoundException();
+    }
+    return event;
   }
 
 
