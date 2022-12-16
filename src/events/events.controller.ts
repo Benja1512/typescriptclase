@@ -17,10 +17,18 @@ import { Event } from './event.entity';
 import {Like, MoreThan, Repository} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import {create} from "domain";
+import {Attendee} from "./attendee.entity";
 
 // noinspection TypeScriptValidateTypes
 @Controller('/events')
 export class EventsController {
+  get attendeeRepository(): any {
+    return this._attendeeRepository;
+  }
+
+  set attendeeRepository(value: any) {
+    this._attendeeRepository = value;
+  }
   private events: Event[] = [];
   private repository: any;
   private when: any;
@@ -28,6 +36,7 @@ export class EventsController {
   private EventsContoller: any;
 
   private readonly Logger = new(this.EventsContoller.name);
+  private _attendeeRepository: any;
 
   constructor(
     @InjectRepository(Event)
@@ -52,6 +61,26 @@ export class EventsController {
     return event;
   }
 
+  @Get('practice2')
+  async practice2() {
+   // return await this.repository.findOne(1, {
+   //    relations: ['attendees'] });
+   // const event = await this.repository.findOne(1);
+
+    const event = new Event();
+    event.id = 1;
+
+    const attendee = new Attendee();
+    attendee.name = 'Using cascade';
+    // attendee.event = event;
+
+    event.attendees.push(attendee);
+    event.attendees = []
+    
+    //await this._attendeeRepository.save(attendee);
+    await this.repository.save(event)
+    return event;
+  }
 
   @Get('/practice')
   async practice() {
