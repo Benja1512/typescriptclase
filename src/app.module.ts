@@ -7,23 +7,20 @@ import { EventsModule } from './events/events.module';
 import { AppJapanService } from './events/app.japan.service';
 import {AppDummy} from "./events/app.dummy";
 import { ConfigModule } from "@nestjs/config";
+import { ormConfig } from './config/orm.config';
 
 @Module({
   imports: [
-      ConfigModule.forRoot(),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      username: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      entities: [Event],
-      synchronize: true
-    ),
+      ConfigModule.forRoot({
+        isGlobal:true
+        load: [ormConfig]
+      }),
+    TypeOrmModule.forRootAsync({
+      useFactory:ormConfig
+    }),
+      EventsModule
+      ],
 
-    EventsModule,
-  ],
   controllers: [AppController, EventsController],
   providers: [
     {
