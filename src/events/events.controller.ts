@@ -76,7 +76,7 @@ export class EventsController {
 
     event.attendees.push(attendee);
     event.attendees = []
-    
+
     //await this._attendeeRepository.save(attendee);
     await this.repository.save(event)
     return event;
